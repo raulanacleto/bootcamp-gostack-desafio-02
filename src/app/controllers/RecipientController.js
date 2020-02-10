@@ -4,7 +4,9 @@ import Recipient from '../models/Recipient';
 
 class RecipientController {
   async index(req, res) {
-    return res.json();
+    const recipients = await Recipient.findAll();
+
+    return res.json(recipients);
   }
 
   async store(req, res) {
