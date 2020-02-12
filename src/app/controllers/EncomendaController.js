@@ -19,14 +19,14 @@ class EncomendaController {
         deliveryman_id: req.params.entregadorId,
         end_date: null,
         canceled_at: null,
-        attributes: ['id', 'name', 'signature_id'],
+        /*  attributes: ['id', 'name', 'signature_id'],
         include: [
           {
             model: File,
             as: 'signature',
             attributes: ['name', 'path', 'url'],
           },
-        ],
+        ], */
       },
     });
 
@@ -80,7 +80,15 @@ class EncomendaController {
   }
 
   async update(req, res) {
-    return res.json();
+    const encomenda = await Encomenda.findByPk(req.params.id);
+
+    if (!encomenda) {
+      return res.status(400).json({ erro: 'encomenda com este id nao existe' });
+    }
+
+    encomenda.update(req.body);
+
+    return res.json(encomenda);
   }
 
   async delete(req, res) {

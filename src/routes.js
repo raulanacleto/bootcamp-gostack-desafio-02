@@ -29,6 +29,7 @@ routes.post('/recipients', RecipientController.store);
 
 //----------------------------------------------------------------------------------
 // rotas de /entregadores
+routes.get('/entregadores/', EntregadorController.index);
 routes.get('/entregadores/:entregadorId', EncomendaController.index);
 routes.get(
   '/entregadores/:entregadorId/entregues',
