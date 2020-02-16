@@ -1,7 +1,7 @@
 import * as Yup from 'yup';
 import { startOfDay, endOfDay, parseISO, format, getTime } from 'date-fns';
 import { Op } from 'sequelize';
-import Encomenda from '../models/Encomenda';
+import Order from '../models/Order';
 
 class StatusEncomendaController {
   async retirar(req, res) {
@@ -15,7 +15,7 @@ class StatusEncomendaController {
         .json({ error: 'Validation fails - start_date nao informado' });
     }
 
-    const encomenda = await Encomenda.findByPk(req.params.encomendaId);
+    const order = await Order.findByPk(req.params.orderId);
 
     // para verificar se a retirada esta sendo feita entre as 08:00 e 20:00
     const oitoHoras = new Date().setHours(8);
@@ -39,27 +39,27 @@ class StatusEncomendaController {
     console.log('startOfDay(parsedDate)', startOfDay(parsedDate));
     console.log('endOfDay(parsedDate)', endOfDay(parsedDate));
 
-    // verificar quantas encomendas o entregador ja retirou no dia
-    const encomendas = await Encomenda.findAll({
+    // verificar quantas orders o entregador ja retirou no dia
+    const orders = await Order.findAll({
       where: {
-        deliveryman_id: encomenda.deliveryman_id,
+        deliveryman_id: order.deliveryman_id,
         start_date: {
           [Op.between]: [startOfDay(parsedDate), endOfDay(parsedDate)],
         },
       },
     });
 
-    if (encomendas.length >= 5) {
+    if (orders.length >= 5) {
       return res
         .status(400)
         .json({ erro: `Entregador nao pode ter mais que 5 retiradas por dia` });
     }
 
     // faz atualizacao do usuario com os dados da requisicao, dados do: req.body
-    await encomenda.update(req.body);
+    await order.update(req.body);
 
     return res.json({
-      encomenda,
+      order,
     });
   }
 

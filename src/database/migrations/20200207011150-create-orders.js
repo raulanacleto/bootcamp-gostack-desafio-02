@@ -1,6 +1,6 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('encomendas', {
+    return queryInterface.createTable('orders', {
       id: {
         type: Sequelize.INTEGER,
         allowNull: false,
@@ -11,12 +11,12 @@ module.exports = {
         type: Sequelize.INTEGER,
         references: { model: 'recipients', key: 'id' },
         onUpdate: 'CASCADE',
-        onDelete: 'SET NULL', // serve pra quando deletar uma imagem, setar null a tabela se usuario
+        onDelete: 'SET NULL', // serve pra encomendasquando deletar uma imagem, setar null a tabela se usuario
         allowNull: true,
       },
       deliveryman_id: {
         type: Sequelize.INTEGER,
-        references: { model: 'entregadors', key: 'id' },
+        references: { model: 'deliverymans', key: 'id' },
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL', // serve pra quando deletar uma imagem, setar null a tabela se usuario
         allowNull: true,
@@ -56,6 +56,6 @@ module.exports = {
   },
 
   down: queryInterface => {
-    return queryInterface.dropTable('encomendas');
+    return queryInterface.dropTable('orders');
   },
 };

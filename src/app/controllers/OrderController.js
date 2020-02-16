@@ -1,22 +1,22 @@
 import * as Yup from 'yup'; // serve pra fazer validacoes, exemplo: se digitou nome de usuario no campo 'name'
-import Encomenda from '../models/Encomenda';
-import Entregador from '../models/Entregador';
+import Order from '../models/Order';
+import Deliveryman from '../models/Deliveryman';
 import Recipient from '../models/Recipient';
 import Queue from '../../lib/Queue';
 import CreateEncomendaMail from '../jobs/CreateEncomendaMail';
 import File from '../models/File';
 
-class EncomendaController {
+class OrderController {
   async indexAll(req, res) {
-    const encomendas = await Encomenda.findAll();
-    return res.json(encomendas);
+    const orders = await Order.findAll();
+    return res.json(orders);
   }
 
   async index(req, res) {
-    // retornar encomendas do entregador :entregadorId
-    const encomendas = await Encomenda.findAll({
+    // retornar encomendas do entregador :deliverymanId
+    const orders = await Order.findAll({
       where: {
-        deliveryman_id: req.params.entregadorId,
+        deliveryman_id: req.params.deliverymanId,
         end_date: null,
         canceled_at: null,
         /*  attributes: ['id', 'name', 'signature_id'],
@@ -30,7 +30,7 @@ class EncomendaController {
       },
     });
 
-    return res.json(encomendas);
+    return res.json(orders);
   }
 
   async store(req, res) {
@@ -44,19 +44,19 @@ class EncomendaController {
       return res.status(400).json({ error: 'Validation fails' });
     }
 
-    const entregador = await Entregador.findByPk(req.body.deliveryman_id);
+    const deliveryman = await Deliveryman.findByPk(req.body.deliveryman_id);
 
-    if (!entregador) {
+    if (!deliveryman) {
       return res
         .status(400)
-        .json({ erro: `entregador ${req.body.deliveryman_id} não existe` });
+        .json({ erro: `deliveryman ${req.body.deliveryman_id} não existe` });
     }
 
-    const { id } = await Encomenda.create(req.body);
+    const { id } = await Order.create(req.body);
 
-    /* const encomenda = await Encomenda.findByPk(id); */
+    /* const encomenda = await Order.findByPk(id); */
 
-    const encomenda = await Encomenda.findByPk(id, {
+    const order = await Order.findByPk(id, {
       include: [
         {
           model: Recipient,
@@ -64,8 +64,8 @@ class EncomendaController {
           attributes: ['id', 'nome'],
         },
         {
-          model: Entregador,
-          as: 'entregador',
+          model: Deliveryman,
+          as: 'deliveryman',
           attributes: ['id', 'name', 'email'],
         },
       ],
@@ -73,41 +73,41 @@ class EncomendaController {
 
     // enviar email ao entregador avisando da encomenda vinculada a ele
     await Queue.add(CreateEncomendaMail.key, {
-      encomenda,
+      order,
     });
 
-    return res.json(encomenda);
+    return res.json(order);
   }
 
   async update(req, res) {
-    const encomenda = await Encomenda.findByPk(req.params.id);
+    const order = await Order.findByPk(req.params.id);
 
-    if (!encomenda) {
-      return res.status(400).json({ erro: 'encomenda com este id nao existe' });
+    if (!order) {
+      return res.status(400).json({ erro: 'order com este id nao existe' });
     }
 
-    encomenda.update(req.body);
+    order.update(req.body);
 
-    return res.json(encomenda);
+    return res.json(order);
   }
 
   async delete(req, res) {
-    const encomenda = await Encomenda.findByPk(req.params.id);
+    const order = await Order.findByPk(req.params.id);
 
-    if (!encomenda) {
-      return res.status(400).json({ erro: 'encomenda informada nao existe' });
+    if (!order) {
+      return res.status(400).json({ erro: 'order informada nao existe' });
     }
 
-    if (encomenda.start_date) {
+    if (order.start_date) {
       return res.status(400).json({
-        erro: `data de retirada já foi definida (${encomenda.start_date}), sendo assim não é possivel deletar`,
+        erro: `data de retirada já foi definida (${order.start_date}), sendo assim não é possivel deletar`,
       });
     }
 
-    await encomenda.destroy();
+    await order.destroy();
 
     return res.json();
   }
 }
 
-export default new EncomendaController();
+export default new OrderController();

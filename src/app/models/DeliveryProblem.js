@@ -1,13 +1,13 @@
 import Sequelize, { Model } from 'sequelize';
 
-class EntregaProblema extends Model {
+class DeliveryProblem extends Model {
   static init(sequelize) {
     super.init(
       {
-        id: {
-          type: Sequelize.INTEGER,
-          primaryKey: true,
-        },
+        // id: {
+        //   type: Sequelize.INTEGER,
+        //   primaryKey: true,
+        // },
         delivery_id: Sequelize.INTEGER,
         description: Sequelize.STRING,
       },
@@ -18,11 +18,11 @@ class EntregaProblema extends Model {
   }
 
   static associate(models) {
-    this.belongsTo(models.Encomenda, {
+    this.belongsTo(models.Order, {
       foreignKey: 'delivery_id',
-      as: 'encomenda',
+      as: 'order',
     });
   }
 }
 
-export default EntregaProblema;
+export default DeliveryProblem;

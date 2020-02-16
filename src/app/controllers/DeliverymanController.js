@@ -1,11 +1,11 @@
 import * as Yup from 'yup'; // serve pra fazer validacoes, exemplo: se digitou nome de usuario no campo 'name'
-import Entregador from '../models/Entregador';
+import Deliveryman from '../models/Deliveryman';
 
-class EntregadorController {
+class DeliverymanController {
   async index(req, res) {
-    const entregadores = await Entregador.findAll();
+    const deliverymans = await Deliveryman.findAll();
 
-    return res.json(entregadores);
+    return res.json(deliverymans);
   }
 
   async store(req, res) {
@@ -20,7 +20,7 @@ class EntregadorController {
       return res.status(400).json({ error: 'Validation fails' });
     }
 
-    const { id, name, avatar_id, email } = await Entregador.create(req.body);
+    const { id, name, avatar_id, email } = await Deliveryman.create(req.body);
 
     return res.json({
       id,
@@ -42,20 +42,20 @@ class EntregadorController {
 
     const { email } = req.body;
 
-    const entregador = await Entregador.findByPk(req.params.id);
+    const deliveryman = await Deliveryman.findByPk(req.params.id);
 
     // verifica se esta alterando email, se nao tiver alterando nao executa o bloco
-    if (email && email !== entregador.email) {
-      const entregadorExists = await Entregador.findOne({
+    if (email && email !== deliveryman.email) {
+      const deliverymanExists = await Deliveryman.findOne({
         where: { email: req.body.email },
       });
-      if (entregadorExists) {
+      if (deliverymanExists) {
         return res.status(400).json({ error: 'usuario ja existe' });
       }
     }
 
     // faz atualizacao do usuario com os dados da requisicao, dados do: req.body
-    const { id, name } = await entregador.update(req.body);
+    const { id, name } = await deliveryman.update(req.body);
 
     return res.json({
       id,
@@ -65,16 +65,16 @@ class EntregadorController {
   }
 
   async delete(req, res) {
-    const entregador = await Entregador.findByPk(req.params.id);
+    const deliveryman = await Deliveryman.findByPk(req.params.id);
 
-    if (!entregador) {
-      return res.status(400).json({ erro: 'entregador informado nao existe' });
+    if (!deliveryman) {
+      return res.status(400).json({ erro: 'deliveryman informado nao existe' });
     }
 
-    await entregador.destroy();
+    await deliveryman.destroy();
 
     return res.json();
   }
 }
 
-export default new EntregadorController();
+export default new DeliverymanController();

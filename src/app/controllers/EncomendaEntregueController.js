@@ -1,12 +1,12 @@
 import { Op } from 'sequelize';
-import Encomenda from '../models/Encomenda';
+import Order from '../models/Order';
 
 class EncomendaEntregueController {
   async index(req, res) {
     // todas as encomendas que nao foram canceladas e ja foram entregues
-    const encomendas = await Encomenda.findAll({
+    const orders = await Order.findAll({
       where: {
-        deliveryman_id: req.params.entregadorId,
+        deliveryman_id: req.params.deliverymanId,
         end_date: {
           [Op.ne]: null,
         },
@@ -14,7 +14,7 @@ class EncomendaEntregueController {
       },
     });
 
-    return res.json(encomendas);
+    return res.json(orders);
   }
 }
 export default new EncomendaEntregueController();

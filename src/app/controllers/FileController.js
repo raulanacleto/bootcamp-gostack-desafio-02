@@ -1,12 +1,12 @@
 import File from '../models/File';
-import Encomenda from '../models/Encomenda';
+import Order from '../models/Order';
 
 class FileController {
   async store(req, res) {
-    const encomenda = await Encomenda.findByPk(req.params.encomendaId);
+    const order = await Order.findByPk(req.params.orderId);
 
-    if (!encomenda) {
-      return res.status(400).json({ error: 'encomenda informada nao existe' });
+    if (!order) {
+      return res.status(400).json({ error: 'order informada nao existe' });
     }
 
     const { originalname: name, filename: path } = req.file;
@@ -16,10 +16,10 @@ class FileController {
       path,
     });
 
-    encomenda.end_date = new Date();
-    encomenda.signature_id = file.id;
+    order.end_date = new Date();
+    order.signature_id = file.id;
 
-    await encomenda.save();
+    await order.save();
 
     return res.json(file);
   }
