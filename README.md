@@ -18,28 +18,35 @@ Tecnologias usadas:
 ---
 Requisitos:
 https://github.com/Rocketseat/bootcamp-gostack-desafio-02
+
 https://github.com/Rocketseat/bootcamp-gostack-desafio-03
 
 ---
 Passo a passo:
 
 sudo docker run --name bancofastfeet -e POSTGRES_PASSWORD=docker -p 5433:5432 -d postgres
+
 sudo docker start bancofastfeet
 
 sudo docker run --name redisfastfeet -p 6379:6379 -d -t redis:alpine
+
 sudo docker start redisfastfeet
 
 ---
 
 yarn
+
 yarn sequelize db:migrate
+
 yarn sequelize db:seed:all
 
 yarn dev
+
 yarn queue
 
 ---
 Para importar no insomnia:
+
 utils/Insomnia_fastfeet.json
 
 
